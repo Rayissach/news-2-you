@@ -1,50 +1,72 @@
-// var express = require("express");
-// var bodyParser = require("body-parser");
-// var logger = require("morgan");
-var mongoose = require("mongoose");
-// var request = require("request")
-// var cheerio = require("cheerio")
-// var axios = require("axios")
-// var mongojs = require('mongojs')
-
 
 var express = require("express");
-var mongojs = require("mongojs");
-// Require request and cheerio. This makes the scraping possible
+var bodyParser = require("body-parser");
+var logger = require("morgan");
+var mongoose = require("mongoose");
 var request = require("request");
+var handlebars = require("handlebars");
+var exphbs = require("express-handlebars");
+var index = require("./routes/index");
+// Our scraping tools
+// Axios is a promised-based http library, similar to jQuery's Ajax method
+// It works on the client and on the server
+var axios = require("axios");
 var cheerio = require("cheerio");
-
-// var PORT = 3000;
 
 // Require all models
 var db = require("./models");
+
+// var PORT = 3000;
 
 // Initialize Express
 var app = express();
 
 // Configure middleware
-var databaseUrl = "scraping";
-var collections = ["nytData"];
 
-var db = mongojs(databaseUrl, collections);
-db.on("error", function(error) {
-  console.log("Database Error:", error);
-});
+// Use morgan logger for logging requests
+app.use(logger("dev"));
+// Use body-parser for handling form submissions
+app.use(bodyParser.urlencoded({ extended: false }));
+// Use express.static to serve the public folder as a static directory
+app.use(express.static("public"));
 
-// mongoose.Promise = Promise;
-// mongoose.connect(
-//     // "mongodb://heroku_sh60cb6j"
-//     "mongodb://localhost/scrape"
-//     , {
-//   useMongoClient: true
+// app.use("/", index);
+
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
+// Set mongoose to leverage built in JavaScript ES6 Promises
+// Connect to the Mongo DB
+mongoose.Promise = Promise;
+mongoose.connect("mongodb://localhost/newsapp")
+// , {
+// //   useMongoClient: true
 // });
 
-app.get("/", function(req, res) {
-    res.json("Hello World")
-});
+// app.get("/", function(req, res) {
+//     // res.json("Hello World")
+//     // res.render("index", {title: 'Express'})
+//     res.send("index")
+// });
+
+app.get("/", function(req, res){
+	db.Article
+	.find({}).sort({createdAt:-1})
+	.then(function(dbArticles){
+		if(dbArticles.length != 0){
+			var handlerObj = {
+				articles: dbArticles
+			}
+			res.render("index", handlerObj)
+		} 
+		else {
+			res.render("index")
+		}
+	})
+})
 
 // app.get("/all",function(req, res) {
-//     db.nytData.find({}, function(error, found) {
+//     db.newsapp.find({}, function(error, found) {
 //         if(error) {
 //             console.log(error)
 //         }
@@ -55,40 +77,50 @@ app.get("/", function(req, res) {
 //     })
 // })
 
+// A GET route for scraping the echojs website
 app.get("/scrape", function(req, res) {
-    // Make a request for the news section of ycombinator
+    // First, we grab the body of the html with request
     request("https://www.nytimes.com/", function(error, response, html) {
-      // Load the html body from request into cheerio
+      // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(html);
-      // For each element with a "title" class
-      $("article h2").each(function(i, element) {
-        // Save the text and href of each link enclosed in the current element
-        var title = $(element).children("a").text();
-        var link = $(element).children("a").attr("href");
   
-        // If this found element had both a title and a link
-        if (title && link) {
-          // Insert the data in the nytData db
-          db.nytData.insert({
-            title: title,
-            link: link
-          },
-          function(err, inserted) {
-            if (err) {
-              // Log the error if one is encountered during the query
-              console.log(err);
-            }
-            else {
-              // Otherwise, log the inserted data
-              console.log(inserted);
-
-            //   res.json(inserted);
-            }
-          });
-        }
+      // Now, we grab every h2 within an article tag, and do the following:
+      $("article h2 p").each(function(i, element) {
+        // Save an empty result object
+        var result = {};
+  
+        // Add the text and href of every link, and save them as properties of the result object
+        result.title = $(this)
+          .children("a")
+          .text();
+        result.link = $(this)
+          .children("a")
+          .attr("href");
+        result.summary = $(this)
+          // .children("p")
+          .text();
+            console.log(result)
+        // Create a new Article using the `result` object built from scraping
+        db.Article
+          .create(result)
+          .then(function(dbArticle){
+            // If we were able to successfully scrape and save an Article, send a message to the client
+            res.send("Scrape Complete");
+          })
+        //   .catch(function(err) {
+        //     // If an error occurred, send it to the client
+        //     res.json(err);
+        //   });
       });
     });
-});
+  });
+  // app.get('/articles', showArticles);
+
+  // exports.showArticles = (req, res) => {
+  //   db.Article.find({})
+  //     .then(data => res.json(data))
+  //     .catch(err => res.json(err));
+  // };
 
  // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
@@ -139,6 +171,70 @@ app.get("/articles", function(req, res) {
       })
       .catch(function(err) {
         // If an error occurred, send it to the client
+        res.json(err);
+      });
+  });
+
+  // Route for retrieving all Notes from the db
+app.get("/notes", function (req, res) {
+    // Find all Notes
+    db.Note.find({})
+      .then(function (dbNote) {
+        // If all Notes are successfully found, send them back to the client
+        res.json(dbNote);
+      })
+      .catch(function (err) {
+        // If an error occurs, send the error back to the client
+        res.json(err);
+      });
+  });
+  
+  // Route for retrieving all Users from the db
+  app.get("/user", function (req, res) {
+    // Find all Users
+    db.User.find({})
+      .then(function (dbUser) {
+        // If all Users are successfully found, send them back to the client
+        res.json(dbUser);
+      })
+      .catch(function (err) {
+        // If an error occurs, send the error back to the client
+        res.json(err);
+      });
+  });
+  
+  // Route for saving a new Note to the db and associating it with a User
+  app.post("/submit", function (req, res) {
+    // Create a new Note in the db
+    db.Note.create(req.body)
+      .then(function (dbNote) {
+        // If a Note was created successfully, find one User (there's only one) and push the new Note's _id to the User's `notes` array
+        // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+        // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+        return db.User.findOneAndUpdate({}, { $push: { notes: dbNote._id } }, { new: true });
+      })
+      .then(function (dbUser) {
+        // If the User was updated successfully, send it back to the client
+        res.json(dbUser);
+      })
+      .catch(function (err) {
+        // If an error occurs, send it back to the client
+        res.json(err);
+      });
+  });
+  
+  // Route to get all User's and populate them with their notes
+  app.get("/populateduser", function (req, res) {
+    // Find all users
+    db.User.find({})
+      // Specify that we want to populate the retrieved users with any associated notes
+      .populate("notes")
+      .then(function (dbUser) {
+        // If able to successfully find and associate all Users and Notes, send them back to the client
+        res.json(dbUser);
+      })
+      .catch(function (err) {
+        // If an error occurs, send it back to the client
         res.json(err);
       });
   });

@@ -1,0 +1,57 @@
+{{!-- <div class="col-md-6 text-center ">
+    <div class="panel article-container">
+        <div id="articles"
+        <a href="{{link}}">
+            <h4 id="title">{{headline}}</h4>
+            <p id="summary">{{body}}</p>
+        </a>
+        {{#if saved}}
+        <button class="btn add-note" data-id="{{_id}}">Add Note</button>
+        <button class="btn delete-article" data-id="{{_id}}">Delete Article</button>
+
+        {{else}}
+
+        <button class="btn primary-btn" id="save" data-id="{{_id}}">Save Article</button>
+        {{/if}}
+
+        <div id="note-modal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close text-left" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title text-center">Add a note</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="node-container">
+                            <ul id="empty-notes" class="list-group">
+                                <li class="no-notes list-group-item">No notes for this article yet.</li>
+                            </ul>
+                        </div>
+                        <div id="notes"></div>
+                        <input type="text" class="note-input note-title" placeholder="Enter Title">
+                        <input type="text" class="note-input note-body" placeholder="Enter Body">
+                    </div>
+                    <button class="btn btn-modal" type="button" id="submit-note">Save Note</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div> --}}
+<div class="col-md-12">
+    <div class="row">
+        <div class="articles">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{this.title}}</h3>
+            </div>
+            <div class="panel-body">
+            {{this.link}}
+            <br />
+            {{this.summary}}
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
