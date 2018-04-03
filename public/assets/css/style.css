@@ -2,3 +2,11 @@
   background: blue;
   margin: 2%;
 }
+
+.save-article a{
+  float: left;
+	display: block;
+	width: 90%;
+	color: #fff;
+	padding-left: 10px;
+}

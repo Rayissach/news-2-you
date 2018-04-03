@@ -44,12 +44,21 @@
         <div class="articles">
           <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{this.title}}</h3>
+                <div class="save-article">
+                    <h3 class="panel-title">
+                    <a href="{{this.link}}">
+                        {{this.title}}
+                    </a>  
+                    </h3>
+                    {{>buttons/save-an-article}}
+                </div>
             </div>
             <div class="panel-body">
-            {{this.link}}
-            {{!-- <br /> --}}
-            {{this.summary}}
+                <a href={{this.link}}>
+                    {{this.link}}
+                    {{!-- <br /> --}}
+                    {{this.summary}}
+                </a>
             </div>
             </div>
         </div>
