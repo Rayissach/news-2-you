@@ -4,11 +4,32 @@ $.getJSON("/articles", function(data) {
     for (var i = 0; i < data.length; i++) {
       // Display the apropos information on the page
       $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "<br />" + data[i].summary +"</p>");
-      console.log(data[i])
+      // console.log(data[i])
     }
   });
   
-  var ele
+$(document).on("click", "#saveart", function(event, data) {
+  event.preventDefault();
+
+  var thisId = $(this).attr("data-id");
+  console.log(thisId)
+
+  $.ajax({
+    method: 'POST',
+    data: thisId,
+    url:'/saved'
+  })
+  .then(function(data) {
+    console.log("//////////////////")
+    console.log(data)
+    console.log("//////////////////")
+    // window.location.href='/'
+
+  })
+
+})
+
+
   // Whenever someone clicks a p tag
   $(document).on("click", "p", function() {
     // Empty the notes from the note section

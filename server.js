@@ -39,15 +39,6 @@ app.set("view engine", "handlebars");
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
 mongoose.connect("mongodb://localhost/newsapp")
-// , {
-// //   useMongoClient: true
-// });
-
-// app.get("/", function(req, res) {
-//     // res.json("Hello World")
-//     // res.render("index", {title: 'Express'})
-//     res.send("index")
-// });
 
 app.get("/", function(req, res){
 	db.Article
@@ -65,17 +56,36 @@ app.get("/", function(req, res){
 	})
 })
 
-// app.get("/all",function(req, res) {
-//     db.newsapp.find({}, function(error, found) {
-//         if(error) {
-//             console.log(error)
-//         }
-//         else {
-//             res.json(found)
-
-//         }
-//     })
+// app.post("/saved", function(req, res) {
+//   db.Article
+//   .findAndUpdate({}).sort({createdAt:-1})
+//   .then(function(dbArticles) {
+//     res.render()
+//   })
 // })
+
+app.get("/saved", function(req, res) {
+  console.log("WHATS UPPPPP")
+});
+
+
+app.get("/saved", function(req, res) {
+  db.Article
+  .find({saved: true}, {_id: req.params.id}).sort({createdAt: -1})
+  .then(function(dbArticles) {
+    if(dbArticles.length != 0) {
+      var hndleobj ={
+        articles: dbArticles
+      }
+      res.render("saved", hndleobj)
+    } else {
+      res.render("saved")
+    }
+  })
+  .catch(function(err) {
+    res.json(err)
+  })
+})
 
 // A GET route for scraping the echojs website
 app.get("/scrape", function(req, res) {
@@ -85,8 +95,11 @@ app.get("/scrape", function(req, res) {
       var $ = cheerio.load(html);
   
       // Now, we grab every h2 within an article tag, and do the following:
-      $("article h2 p.summary").each(function(i, element) {
+      $("article h2").each(function(i, element) {
         // Save an empty result object
+
+        $("p.summary")
+
         var result = {};
   
         // Add the text and href of every link, and save them as properties of the result object
@@ -114,6 +127,7 @@ app.get("/scrape", function(req, res) {
       });
     });
   });
+
  // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
     // Grab every document in the Articles collection
@@ -145,6 +159,55 @@ app.get("/articles", function(req, res) {
         res.json(err);
       });
   });
+
+  // app.get("/saved/:id", function(req, res) {
+  //   db.Article
+  //   .find({saved: true}, {sort: {created: -1}})
+  //   .then(function (dbArticle) {
+  //     if (dbArticle == 0) {
+  //       res.render("placeholder", {message: "Nothing Here"})
+  //     } else {
+  //       res.render("search", {search: dbArticle})
+  //     }
+  //   })      
+  // })
+
+  // app.get("/saved/", function(req, res) {
+  //   db.Article
+  //   .findById({_id:req.params.id},{ saved: true }, {sort: {created: -1}})
+  //   .then(function(dbArticle) {
+  //       var hbsObject = {};
+  //       hbsObject = dbArticle;
+  //       // console.log(hbsObject)
+  //       res.render('saved', hbsObject);
+  //     })
+  //     .catch(function(err) {
+  //       res.json(err);
+  //     });
+  // })
+
+  app.post("/saved", function(req, res) {
+    db.Article
+    .update({_id: req.params.id}, {$set: {saved: true} })
+    .then(function (data) {
+      res.json(data)
+      
+    })
+  });
+
+
+  
+
+//   app.get("/saved", function(req, res) {
+//   Article.find({issaved: true}, null, {sort: {created: -1}}, function(err, data) {
+//     if(data.length === 0) {
+//       res.render("placeholder", {message: "You have not saved any articles yet. Try to save some delicious news by simply clicking \"Save Article\"!"});
+//     }
+//     else {
+//       res.render("saved", {saved: data});
+//     }
+//   });
+// });
   
   // Route for saving/updating an Article's associated Note
   app.post("/articles/:id", function(req, res) {
