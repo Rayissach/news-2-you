@@ -39,10 +39,10 @@
         </div>
     </div>
 </div> --}}
-<div class="col-md-12">
+<div class="col-md-6">
     <div class="row">
         <div class="articles">
-          <div class="panel panel-default">
+          <div class="panel panel-default" id='panel-style'>
             <div class="panel-heading" id='panel-headstyle'>
                 <div class="save-article">
                     <h3 class="panel-title">
@@ -50,10 +50,11 @@
                         {{this.title}}
                     </a>  
                     </h3>
+                    <br />
                     {{>buttons/save-an-article}}
                 </div>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" id='panel-bodystyle'>
                 <a href={{this.link}}>
                     {{this.link}}
                     {{!-- <br /> --}}
