@@ -7,6 +7,19 @@ $.getJSON("/articles", function(data) {
       // console.log(data[i])
     }
   });
+
+  // $(document).on("click", '#scrape' function(event, res) {
+  //   event.preventDefault();
+
+  //   $.ajax({
+  //     method: 'POST',
+  //     data: 'JSON',
+  //     url: '/articles/scrape'
+  //   })
+  //   .then(function(data){
+
+  //   })
+  // })
   
 $(document).on("click", "#saveart", function(event, data) {
   event.preventDefault();
@@ -15,14 +28,15 @@ $(document).on("click", "#saveart", function(event, data) {
   console.log(thisId)
 
   $.ajax({
-    method: 'POST',
+    method: 'GET',
     data: thisId,
-    url:'/saved'
+    url:'/saved/'
   })
   .then(function(data) {
     console.log("//////////////////")
     console.log(data)
     console.log("//////////////////")
+    
     // window.location.href='/'
 
   })

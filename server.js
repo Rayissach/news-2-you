@@ -34,6 +34,7 @@ app.use(express.static("public"));
 
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
+// HandlebarsFormHelpers.register(Handlebars);
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
@@ -64,12 +65,12 @@ app.get("/", function(req, res){
 //   })
 // })
 
-app.get("/saved", function(req, res) {
-  console.log("WHATS UPPPPP")
-});
+// app.get("/saved", function(req, res) {
+//   console.log("WHATS UPPPPP")
+// });
 
 
-app.get("/saved", function(req, res) {
+app.get("/saved/", function(req, res) {
   db.Article
   .find({saved: true}, {_id: req.params.id}).sort({createdAt: -1})
   .then(function(dbArticles) {
@@ -78,14 +79,51 @@ app.get("/saved", function(req, res) {
         articles: dbArticles
       }
       res.render("saved", hndleobj)
+      res.send({message: 'SAVEDDDD'})
     } else {
       res.render("saved")
+      res.render({message: 'SAVEDDDD ART'})
     }
   })
   .catch(function(err) {
     res.json(err)
   })
 })
+
+app.post("/saved/:id", function(req, res) {
+  db.Article
+  // .findById({_id: req.params.id})
+  // .then(function(dbArticels) {
+  //   if(dbArticles.saved) {
+  //     Article.findByIdAndUpdate(req.params.id), {$set:{saved: false}}, function (err, data) {
+  //       res.redirect("/")
+  //     }
+  //     } else {
+  //       Article.findByIdAndUpdate(req.params.id), {$set:{saved: true}}, function (err, data) {
+  //         res.redirect("/saved")
+  //       }
+  //     }
+  .update({_id: req.params.id}, {$set: {saved: true}})
+  .then(function(data) {
+    res.json(data)
+  })
+  })
+// })
+
+// app.post("/save/:id", function(req, res) {
+//   Article.findById(req.params.id, function(err, data) {
+//     if (data.issaved) {
+//       Article.findByIdAndUpdate(req.params.id, {$set: {issaved: false, status: "Save Article"}}, {new: true}, function(err, data) {
+//         res.redirect("/");
+//       });
+//     }
+//     else {
+//       Article.findByIdAndUpdate(req.params.id, {$set: {issaved: true, status: "Saved"}}, {new: true}, function(err, data) {
+//         res.redirect("/saved");
+//       });
+//     }
+//   });
+// });
 
 // A GET route for scraping the echojs website
 app.get("/scrape", function(req, res) {
@@ -119,6 +157,7 @@ app.get("/scrape", function(req, res) {
           .then(function(dbArticle){
             // If we were able to successfully scrape and save an Article, send a message to the client
             res.send("Scrape Complete");
+            res.redirect("/")
           })
         //   .catch(function(err) {
         //     // If an error occurred, send it to the client

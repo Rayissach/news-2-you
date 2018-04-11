@@ -1,12 +1,55 @@
 .article-container {
   background: blue;
-  margin: 2%;
+  /* margin: 2%; */
 }
-
+#nav-style {
+	background-color: #080808;
+	border-color: #080808;
+	border-radius: 0%;
+	position:fixed;
+	top:0;
+	z-index: 2;
+	width:100%;
+	/* height:500px; */
+	/* position: fixed; */
+}
+.articles {
+	margin-top: 3%
+}
 .save-article a{
   float: left;
 	display: block;
 	width: 90%;
 	color: #fff;
 	padding-left: 10px;
+}
+
+.header {
+	height: 500px;
+	box-shadow: 0px 4px 10px black;
+	background: url('https://images.unsplash.com/photo-1509635164051-5584296265cd?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=14cdb08a207bcc4c4969409a1ce90898&auto=format&fit=crop&w=2252&q=80');
+	background-size: cover;
+	margin: 0%
+}
+#saveart {
+	color: #fff;
+	background-color: #ac3d72c7;
+	border-color: #b95e83;
+}
+.fixed {
+		position:fixed;
+		top:0;
+		z-index: 1;
+		width:100%;
+		height:450px;
+		margin-top: 50px
+		/* repeat: repeat-x;  */
+}
+#panel-headstyle {
+	color: #333;
+	background-color: #d1b4a6a8;
+	border-color: #ddd;
+}
+.block-style {
+	height: 520px;
 }
