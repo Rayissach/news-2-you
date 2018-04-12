@@ -28,7 +28,7 @@ $(document).on("click", "#saveart", function(event, data) {
   console.log(thisId)
 
   $.ajax({
-    method: 'GET',
+    method: 'PUT',
     data: thisId,
     url:'/saved/'
   })
