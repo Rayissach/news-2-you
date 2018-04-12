@@ -57,32 +57,21 @@ app.get("/", function(req, res){
 	})
 })
 
-// app.post("/saved", function(req, res) {
-//   db.Article
-//   .findAndUpdate({}).sort({createdAt:-1})
-//   .then(function(dbArticles) {
-//     res.render()
-//   })
-// })
-
-// app.get("/saved", function(req, res) {
-//   console.log("WHATS UPPPPP")
-// });
-
-
-app.get("/saved/", function(req, res) {
+app.get("/saved", function(req, res) {
   db.Article
-  .find({saved: true}, {_id: req.params.id}).sort({createdAt: -1})
+  .find({})
+  // .find({saved: true}, {_id: req.params.id})
+  .sort({createdAt: -1})
   .then(function(dbArticles) {
     if(dbArticles.length != 0) {
       var hndleobj ={
         articles: dbArticles
       }
       res.render("saved", hndleobj)
-      res.send({message: 'SAVEDDDD'})
+      // res.send({message: 'SAVEDDDD'})
     } else {
       res.render("saved")
-      res.render({message: 'SAVEDDDD ART'})
+      // res.render({message: 'SAVEDDDD ART'})
     }
   })
   .catch(function(err) {
@@ -90,7 +79,7 @@ app.get("/saved/", function(req, res) {
   })
 })
 
-app.post("/saved/:id", function(req, res) {
+app.put("/articles", function(req, res) {
   db.Article
   // .findById({_id: req.params.id})
   // .then(function(dbArticels) {

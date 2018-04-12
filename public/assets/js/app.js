@@ -30,15 +30,18 @@ $(document).on("click", "#saveart", function(event, data) {
   $.ajax({
     method: 'PUT',
     data: thisId,
-    url:'/saved/'
+    url:'/articles'
   })
   .then(function(data) {
     console.log("//////////////////")
     console.log(data)
     console.log("//////////////////")
-    
-    // window.location.href='/'
+    // for (var i=0; i<data.length; i++) {
 
+    // $('articles').val('')
+    // .append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "<br />" + data[i].summary +"</p>")
+    // window.location.href='/'
+    // }
   })
 
 })

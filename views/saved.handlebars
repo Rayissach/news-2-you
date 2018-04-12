@@ -1,6 +1,8 @@
+{{>nav/navbar}}
+
 <h1>Helloooo</h1>
 
-{{#if saved}}
+{{!-- {{#if saved}}
 <button class="btn add-note" data-id="{{_id}}">Add Note</button>
 <button class="btn delete-article" data-id="{{_id}}"> Delete Article</button>
 
@@ -8,7 +10,11 @@
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" id="save" data-id="{{_id}}">Save Article</button>
 
-{{/if}}
+{{/if}} --}}
+
+<div id="articles">
+    {{#each savedArticles}} {{>articles/article-block}}  {{/each}}
+</div>
 
 {{!-- <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
